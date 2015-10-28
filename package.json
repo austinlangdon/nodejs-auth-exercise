@@ -1,0 +1,26 @@
+{
+  "name": "nodejs-auth-exercise",
+  "version": "0.0.1",
+  "description": "An exercise to learn more about web application authentication with traditional cookie based session",
+  "main": "app.js",
+  "dependencies": {
+    "body-parser": "^1.14.1",
+    "express": "^4.13.3",
+    "jade": "^1.11.0",
+    "mongoose": "^4.2.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/austinlangdon/nodejs-auth-exercise.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/austinlangdon/nodejs-auth-exercise/issues"
+  },
+  "homepage": "https://github.com/austinlangdon/nodejs-auth-exercise#readme"
+}
