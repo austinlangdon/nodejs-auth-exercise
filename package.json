@@ -4,7 +4,9 @@
   "description": "An exercise to learn more about web application authentication with traditional cookie based session",
   "main": "app.js",
   "dependencies": {
+    "bcryptjs": "^2.3.0",
     "body-parser": "^1.14.1",
+    "client-sessions": "^0.7.0",
     "express": "^4.13.3",
     "jade": "^1.11.0",
     "mongoose": "^4.2.3"

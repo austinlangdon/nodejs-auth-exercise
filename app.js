@@ -1,6 +1,8 @@
 var bodyParser = require('body-parser');
+var bcrypt = require('bcryptjs');
 var express = require('express');
 var mongoose = require('mongoose');
+var sessions = require('client-sessions');
 
 var Schema = mongoose.Schema;
 var ObjectId = Schema.ObjectId;
@@ -25,59 +27,90 @@ mongoose.connect('mongodb://localhost/newauth');
 // middleware
 app.use(bodyParser.urlencoded({ extended:true }));
 
-app.get("/", function (req, res) {
+app.use(sessions({
+	cookieName: 'session',
+	secret: 'dasd90asd8989af8dg9898eq9',
+	duration: 30 * 60 * 1000,
+	activeDuration: 5 * 60 * 1000
+}));
+
+app.use(function(req, res, next) {
+	if(req.session && req.session.user) {
+		User.findOne({ email: req.session.user.email }, function(err, user) {
+			if(user) {
+				req.user = user;
+				delete req.user.password;
+				req.session.user = user;
+				res.locals.user = user;
+			}
+			next();
+		});
+	}
+});
+
+function requireLogin(req, res, next) {
+	if(!req.user) {
+		res.direct('login');
+	} else {
+		next();
+	}
+}
+
+app.get('/', function (req, res) {
 	res.render('index.jade');
 });
 
-app.get("/register", function (req, res) {
+app.get('/register', function (req, res) {
 	res.render('register.jade');
 });
 
-app.post("/register", function (req, res) {
+app.post('/register', function (req, res) {
+	var hash = bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(10));
 	var user = new User({
 		firstName: req.body.firstName,
 		lastName: req.body.lastName,
 		email: req.body.email,
-		password: req.body.password
+		password: hash
 	});
 	
 	user.save(function(err) {
 		if (err) {
-			var error = "Something bad happened. Try again!";
+			var error = 'Something bad happened. Try again!';
 			
 			if (err.code === 11000) {
-				error = "That email is already taken, try another.";
+				error = 'That email is already taken, try another.';
 			}
 
-			res.render("register.jade", {error: error});
+			res.render('register.jade', {error: error});
 			
 		} else {
-			res.redirect("/dashboard");
+			res.redirect('/dashboard');
 		}
 	});
 });
 
-app.get("/login", function (req, res) {
+app.get('/login', function (req, res) {
 	res.render('login.jade');
 });
 
-app.get("/dashboard", function (req, res) {
-	res.render("dashboard.jade");
+app.get('/dashboard', requireLogin,  function (req, res) {
+	res.redirect('/login');
 });
 
-app.get("/logout", function (req, res) {
-	res.redirect("/login");
+app.get('/logout', function (req, res) {
+	res.redirect('/login');
 });
 
-app.post("/login", function (req, res) {
+app.post('/login', function (req, res) {
 	User.findOne({ email: req.body.email }, function(err, user) {
 		if(!user) {
-			res.render("login.jade", {error: "Invalid email or password" });
+			res.render('login.jade', {error: 'Invalid email or password' });
 		} else {
-			if(req.body.password === user.password) {
-				res.render("dashboard.jade", {user: user});
+			if(bcrypt.compareSync(req.body.password, user.password)) {
+				req.session.user = user; // set-cookie
+				res.render('dashboard.jade', {user: user});
 			} else {
-				res.render("login.jade", {error: "Invalid email or password" });
+				res.render('login.jade', {error: 'Invalid email or password' });
 			}
 		}
 	});
