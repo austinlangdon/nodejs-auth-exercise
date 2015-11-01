@@ -9,23 +9,23 @@ block body
 		p ERROR: #{error}
 
 	h1 Create an Account
-	form(method="post")
-		input(type="hidden", name="_csfr", value=csfrToken)
+	form(method='post')
+		input(type='hidden', name='_csfr', value=csfrToken)
 
 		span First Name:
-		input(type="text", name="firstName", required=true)
+		input(type='text', name='firstName', required=true)
 		br
 
 		span Last Name:
-		input(type="text", name="lastName", required=true)
+		input(type='text', name='lastName', required=true)
 		br
 
 		span Email:
-		input(type="email", name="email", required=true)
+		input(type='email', name='email', required=true)
 		br
 
 		span Password:
-		input(type="password", name="password", required=true)
+		input(type='password', name='password', required=true)
 		br
 
-		input(type="submit")
+		input(type='submit')

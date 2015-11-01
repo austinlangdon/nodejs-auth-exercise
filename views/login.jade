@@ -1,7 +1,7 @@
 extends base
 
 block vars
-	- var title = "Login"
+	- var title = 'Login'
 
 block body
 	h1 Login Into Your Account
@@ -9,13 +9,14 @@ block body
 	if error
 		p ERROR: #{error}
 
-	form(method="post")
+	form(method='post')
+		input(type='hidden', name='_csrf', value=csrfToken)
 		span Email:
-		input(type="email", name="email", required=true)
+		input(type='email', name='email', required=true)
 		br
 
 		span Password:
-		input(type="password", name="password", required=true)
+		input(type='password', name='password', required=true)
 		br
 
-		input(type="submit")
+		input(type='submit')

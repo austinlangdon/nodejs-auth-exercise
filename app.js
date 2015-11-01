@@ -1,5 +1,6 @@
 var bodyParser = require('body-parser');
 var bcrypt = require('bcryptjs');
+var csrf = require('csurf');
 var express = require('express');
 var mongoose = require('mongoose');
 var sessions = require('client-sessions');
@@ -45,6 +46,9 @@ app.use(function(req, res, next) {
 			}
 			next();
 		});
+	
+	} else {
+		next();
 	}
 });
 
@@ -56,12 +60,14 @@ function requireLogin(req, res, next) {
 	}
 }
 
+app.use(csrf());
+
 app.get('/', function (req, res) {
 	res.render('index.jade');
 });
 
 app.get('/register', function (req, res) {
-	res.render('register.jade');
+	res.render('register.jade', { csrfToken: req.csrfToken() });
 });
 
 app.post('/register', function (req, res) {
@@ -90,7 +96,7 @@ app.post('/register', function (req, res) {
 });
 
 app.get('/login', function (req, res) {
-	res.render('login.jade');
+	res.render('login.jade', { csrfToken: req.csrfToken() });
 });
 
 app.get('/dashboard', requireLogin,  function (req, res) {
